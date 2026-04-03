@@ -44,28 +44,9 @@ jobs:
           cd android
           ./gradlew assembleDebug --no-daemon
 
-
-      - name: Crear Release con la APK
-        uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
+      - name: Subir APK como artefacto
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v${{ github.run_number }}
-          name: "ETHER Radio v${{ github.run_number }}"
-          body: |
-            ## 📻 ETHER Radio APK
-
-            Descarga e instala la APK en tu Android:
-
-            1. Descarga el archivo `app-debug.apk`
-            2. En tu móvil ve a **Ajustes → Seguridad → Instalar apps desconocidas** y actívalo
-            3. Abre el archivo APK descargado e instala
-
-            **Incluye:**
-            - Búsqueda de +25.000 emisoras (radio-browser.info)
-            - Favoritos guardados localmente
-            - Soporte HLS y MP3 streams
-          files: android/app/build/outputs/apk/debug/app-debug.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ETHER-Radio-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
