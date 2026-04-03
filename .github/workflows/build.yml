@@ -30,6 +30,13 @@ jobs:
       - name: Instalar dependencias npm
         run: npm install
 
+      - name: DEBUG - Ver estructura
+        run: |
+          echo "=== RAIZ ==="
+          ls -la
+          echo "=== WWW ==="
+          ls -la www/ || echo "www NO EXISTE"
+
       - name: Añadir plataforma Android
         run: npx cap add android
 
