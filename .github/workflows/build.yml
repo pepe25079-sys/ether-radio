@@ -1,0 +1,77 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar dependencias npm
+        run: npm install
+
+      - name: Añadir plataforma Android
+        run: npx cap add android
+
+      - name: Sincronizar web con Android
+        run: npx cap sync android
+
+      - name: Dar permisos a gradlew
+        run: chmod +x android/gradlew
+
+      - name: Compilar APK debug
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Subir APK como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: ETHER-Radio-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Crear Release con la APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "ETHER Radio v${{ github.run_number }}"
+          body: |
+            ## 📻 ETHER Radio APK
+
+            Descarga e instala la APK en tu Android:
+
+            1. Descarga el archivo `app-debug.apk`
+            2. En tu móvil ve a **Ajustes → Seguridad → Instalar apps desconocidas** y actívalo
+            3. Abre el archivo APK descargado e instala
+
+            **Incluye:**
+            - Búsqueda de +25.000 emisoras (radio-browser.info)
+            - Favoritos guardados localmente
+            - Soporte HLS y MP3 streams
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
