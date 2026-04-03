@@ -1,0 +1,12 @@
+{
+  "appId": "com.etherradio.app",
+  "appName": "ETHER Radio",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
