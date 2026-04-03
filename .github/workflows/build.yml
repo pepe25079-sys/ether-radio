@@ -44,12 +44,6 @@ jobs:
           cd android
           ./gradlew assembleDebug --no-daemon
 
-      - name: Subir APK como artefacto
-        uses: actions/upload-artifact@v4
-        with:
-          name: ETHER-Radio-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
 
       - name: Crear Release con la APK
         uses: softprops/action-gh-release@v2
